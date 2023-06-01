@@ -1,0 +1,14 @@
+version: '3'
+services:
+  webapp:
+    image: restyoursoap_front
+    container_name: restyoursoap_front
+    build: .
+    environment:
+      BACK_SERVER: http://host.docker.internal:7090/soap
+    ports:
+      - "7091:3000"
+    restart: unless-stop
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+

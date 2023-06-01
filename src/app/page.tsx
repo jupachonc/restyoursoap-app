@@ -8,63 +8,75 @@ export default function Home() {
 
 
   // Handle when file is uploaded using form
-  function handleFormChanged(e: ChangeEvent<HTMLInputElement>) {
+  function handleFile(e: ChangeEvent<HTMLInputElement>) {
     if (!e.target.files) return;
     console.log(e.target.files[0]);
     setFile(e.target.files[0]);
   }
 
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(file)
     const formData = new FormData();
     formData.append("file", file);
-    axios.post("/api/restyoursoap", formData, {
+    await axios.post("/api/toyaml", formData, {
       headers: {
         "content-type": "multipart/form-data"
       }
     }).then(data => {
-      console.log(data.data);
-    });    //if await is removed, console log will be called before the uploadFile() is executed completely.
-    //since the await is added, this will pause here then console log will be called
-    
+      new File([data.data], "sa.yml");
+    });
   }
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-      <div>
-        <form action="form" onSubmit={handleSubmit}>
-          <input type="file"
-            id='upload'
-            onChange={handleFormChanged}
-            accept='.xml,.wsdl'
-          />
-          <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-2 lg:text-left">
-            <button
-              type="submit"
-              className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-            >
-              <h2 className={`mb-3 text-2xl font-semibold`}>
-                Descargar YAML{' '}
-                <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-                  &darr;
-                </span>
-              </h2>
-            </button>
+      <div className="p-3 md:w-1/2 w-[360px] rounded-md">
+        <span className="flex justify-center items-center bg-white text-[12px] mb-1 text-red-500">HI</span>
+        <div className="h-32 w-full overflow-hidden relative shadow-md border-2 items-center rounded-md cursor-pointer   border-gray-400 border-dotted">
+          <input type="file" onChange={handleFile} className="h-full w-full opacity-0 z-10 absolute" />
+          <div className="h-full w-full bg-gray-200 absolute z-1 flex justify-center items-center top-0">
+            <div className="flex flex-col">
+              <i className="mdi mdi-folder-open text-[30px] text-gray-400 text-center"></i>
+              <span className="text-[12px]">{`Drag and Drop a file`}</span>
+            </div>
           </div>
+        </div>
 
-        </form>
       </div>
+      <div className="mb-32 grid text-center lg:grid-cols-3 lg:text-left">
+        <button
+          type="submit"
+          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+        >
+          <h2 className={`mb-3 text-2xl font-semibold`}>
+            Descargar YAML{' '}
+            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              &darr;
+            </span>
+          </h2>
+        </button>
+        <button
+          type="submit"
+          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+        >
+          <h2 className={`mb-3 text-2xl font-semibold`}>
+            Descargar Redocly{' '}
+            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              &darr;
+            </span>
+          </h2>
+        </button>
+        <button
+          type="submit"
+          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+        >
+          <h2 className={`mb-3 text-2xl font-semibold`}>
+            Descargar Proyecto Base{' '}
+            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              &darr;
+            </span>
+          </h2>
+        </button>
+      </div>
+
     </main>
   )
 }
