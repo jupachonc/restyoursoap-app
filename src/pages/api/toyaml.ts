@@ -3,6 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 
 const ENDPOINT = `${process.env.BACK_SERVER}/toREST`
+console.log(ENDPOINT)
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
@@ -16,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         .end(data.data)
     })
     .catch(function (error) {
+      console.log(error)
       if (error.response) {
         res.status(error.response.status).json(error.response.data)
       } else if (error.request) {
