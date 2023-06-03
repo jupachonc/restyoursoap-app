@@ -116,7 +116,7 @@ export default function Home() {
   async function getYAML() {
     const formData = new FormData();
     formData.append("file", file);
-    await axios.post("/api/toyaml", formData, {
+    await axios.post("/api/toYAML", formData, {
       headers: {
         "content-type": "multipart/form-data"
       }
@@ -132,11 +132,27 @@ export default function Home() {
   async function getYAMLData() {
     const formData = new FormData();
     formData.append("file", file);
-    return axios.post("/api/toyaml", formData, {
+    return axios.post("/api/toYAML", formData, {
       headers: {
         "content-type": "multipart/form-data"
       }
     })
+  }
+
+  async function getJSON() {
+    const formData = new FormData();
+    formData.append("file", file);
+    await axios.post("/api/toJSON", formData, {
+      headers: {
+        "content-type": "multipart/form-data"
+      }
+    }).then(response => {
+      let headerLine = response.headers['content-disposition'];
+      let startFileNameIndex = headerLine.indexOf('"') + 1
+      let endFileNameIndex = headerLine.lastIndexOf('"');
+      let filename = headerLine.substring(startFileNameIndex, endFileNameIndex);
+      fileDownload(response.data, filename)
+    });
   }
 
   async function getProject() {
@@ -163,6 +179,22 @@ export default function Home() {
     if (!validateFile()) return
     await toast.promise(
       getYAML(),
+      {
+        pending: 'Se está procesando el archivo',
+        success: 'Archivo procesado 👌',
+        error: 'Hubo un error procesando el archivo 🤯',
+      },
+      {
+        theme: "colored",
+      }
+    )
+
+  }
+
+  async function handleJSON() {
+    if (!validateFile()) return
+    await toast.promise(
+      getJSON(),
       {
         pending: 'Se está procesando el archivo',
         success: 'Archivo procesado 👌',
@@ -272,7 +304,7 @@ export default function Home() {
       </div>
 
 
-      <div className="mb-32 mt-8 grid text-center lg:grid-cols-3 lg:text-left">
+      <div className="mb-32 mt-8 grid text-center lg:grid-cols-4 lg:text-left">
         <button
           onClick={handleYAML}
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
@@ -285,6 +317,20 @@ export default function Home() {
           </h2>
           <p className={`ms-5 max-w-[30ch] text-sm opacity-50`}>
             Archivo de definición OpenAPI en formato YAML
+          </p>
+        </button>
+        <button
+          onClick={handleJSON}
+          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
+        >
+          <h2 className={`mb-3 text-2xl font-semibold`}>
+            Descargar JSON{' '}
+            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
+              &darr;
+            </span>
+          </h2>
+          <p className={`ms-5 max-w-[30ch] text-sm opacity-50`}>
+            Archivo de definición OpenAPI en formato JSON
           </p>
         </button>
         <button
