@@ -1,12 +1,13 @@
 import axios from "axios"
 import { NextApiRequest, NextApiResponse } from "next";
+import { arrayBuffer } from "stream/consumers";
 
 
 const ENDPOINT = `${process.env.BACK_SERVER}/getProject`
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-  await axios.post(ENDPOINT, req.body, { headers: req.headers })
+  await axios.post(ENDPOINT, req.body, { headers: req.headers, responseType: 'arraybuffer'})
     .then(data => {
       return res
         .status(200)
@@ -21,6 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       } else if (error.request) {
         res.status(error.request.status).end()
       } else {
+        console.log(error)
         res.status(520).end()
       }
     });

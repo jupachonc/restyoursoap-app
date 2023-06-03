@@ -145,13 +145,14 @@ export default function Home() {
     await axios.post("/api/getProject", formData, {
       headers: {
         "content-type": "multipart/form-data"
-      }
+      }, responseType: 'arraybuffer'
     }).then(response => {
+      console.log(response.data);
       let headerLine = response.headers['content-disposition'];
       let startFileNameIndex = headerLine.indexOf('"') + 1
       let endFileNameIndex = headerLine.lastIndexOf('"');
       let filename = headerLine.substring(startFileNameIndex, endFileNameIndex);
-      fileDownload(response.data, filename)
+      fileDownload(new Blob([response.data]), filename)
     });
   }
 
