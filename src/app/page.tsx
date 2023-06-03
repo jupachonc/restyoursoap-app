@@ -6,10 +6,14 @@ import styles from "../styles/DropZone.module.css";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import fileDownload from 'js-file-download';
+import { useRouter } from 'next/navigation';
+import yaml from 'js-yaml'
 
 
 export default function Home() {
   const [file, setFile] = useState<File | string>('fileurl');
+
+  const router = useRouter();
 
   function validateAndSetFile(file: File) {
     try {
@@ -125,6 +129,17 @@ export default function Home() {
     });
   }
 
+  async function getYAMLData() {
+    const formData = new FormData();
+    formData.append("file", file);
+    return axios.post("/api/toyaml", formData, {
+      headers: {
+        "content-type": "multipart/form-data"
+      }
+    })
+  }
+
+
   /* Handlers */
 
   async function handleYAML() {
@@ -141,6 +156,25 @@ export default function Home() {
       }
     )
 
+  }
+
+  async function handleRedoc() {
+    if (!validateFile()) return
+    const response = await toast.promise(
+      getYAMLData(),
+      {
+        pending: 'Se está procesando el archivo',
+        success: 'Archivo procesado 👌',
+        error: 'Hubo un error procesando el archivo 🤯',
+      },
+      {
+        theme: "colored",
+      }
+    )
+
+    let openapi = yaml.load(response.data)
+    sessionStorage.setItem("redoc", JSON.stringify(openapi))
+    router.push("/redoc")
   }
 
 
@@ -221,16 +255,17 @@ export default function Home() {
           </p>
         </button>
         <button
+          onClick={handleRedoc}
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
           <h2 className={`mb-3 text-2xl font-semibold`}>
-            Descargar Redocly{' '}
+            Ver Documentación{' '}
             <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              &darr;
+              -&gt;
             </span>
           </h2>
           <p className={`ms-5 max-w-[30ch] text-sm opacity-50`}>
-            Documentación del API en el fromato de Redocly
+            Documentación del API en el formato de Redoc
           </p>
         </button>
         <button
