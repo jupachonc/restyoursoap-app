@@ -4,9 +4,9 @@ import { RedocStandalone } from 'redoc';
 
 
 export default function Redoc() {
-    
+
     if (typeof window !== 'undefined') {
-        const localVariable = localStorage.getItem("redoc");
+        const localVariable = sessionStorage.getItem("redoc");
         let apiDefinition;
 
         if (localVariable == null) {
