@@ -139,6 +139,22 @@ export default function Home() {
     })
   }
 
+  async function getProject() {
+    const formData = new FormData();
+    formData.append("file", file);
+    await axios.post("/api/getProject", formData, {
+      headers: {
+        "content-type": "multipart/form-data"
+      }
+    }).then(response => {
+      let headerLine = response.headers['content-disposition'];
+      let startFileNameIndex = headerLine.indexOf('"') + 1
+      let endFileNameIndex = headerLine.lastIndexOf('"');
+      let filename = headerLine.substring(startFileNameIndex, endFileNameIndex);
+      fileDownload(response.data, filename)
+    });
+  }
+
 
   /* Handlers */
 
@@ -175,6 +191,22 @@ export default function Home() {
     let openapi = yaml.load(response.data)
     sessionStorage.setItem("redoc", JSON.stringify(openapi))
     router.push("/redoc")
+  }
+
+  async function handleProject() {
+    if (!validateFile()) return
+    await toast.promise(
+      getProject(),
+      {
+        pending: 'Se está procesando el archivo',
+        success: 'Archivo procesado 👌',
+        error: 'Hubo un error procesando el archivo 🤯',
+      },
+      {
+        theme: "colored",
+      }
+    )
+
   }
 
 
@@ -269,6 +301,7 @@ export default function Home() {
           </p>
         </button>
         <button
+          onClick={handleProject}
           type="submit"
           className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
         >
