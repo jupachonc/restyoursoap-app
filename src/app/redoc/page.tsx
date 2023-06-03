@@ -1,25 +1,29 @@
 'use client';
 import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { RedocStandalone } from 'redoc';
 
 
 export default function Redoc() {
     //const object = JSON.parse(query)
     //console.log(object)
-    let localVariable;
+    let localVariable: any;
     if (typeof window !== 'undefined') {
 
         localVariable = sessionStorage.getItem("redoc");
     }
-    const router = useRouter();
+    const { push } = useRouter();
 
     let apiDefinition;
 
-    if (localVariable == null) {
-        router.push("/")
-    } else {
-        apiDefinition = JSON.parse(localVariable)
-    }
+    useEffect(() => {
+        if (localVariable == null) {
+            push("/")
+        }
+    ;
+     }, []);
+    
+    apiDefinition = JSON.parse(localVariable)
 
     return (
         <>
